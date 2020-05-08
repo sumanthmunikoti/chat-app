@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react"
 import queryString from 'query-string'
 import io from 'socket.io-client'
+import {ControlledEditor} from "@monaco-editor/react";
 
 let socket
 
-const Chat = ({location}) => {
+const Chat = ({ location }) => {
     const [name, setName] = useState('')
     const [room, setRoom] = useState('')
     const [message, setMessage] = useState('')
@@ -13,25 +14,28 @@ const Chat = ({location}) => {
 
     useEffect(() => {
         //acts like componentDidUpdate and componentDidMount
-        const {name, room} = queryString.parse(location.search)
+        const { name, room } = queryString.parse(location.search)
         socket = io(ENDPOINT)
 
-        setName(name)
         setRoom(room)
+        setName(name)
 
-        socket.emit('join', {name, room}, ({error}) => {
-            alert(error)
-        })
 
-        return () => {
-            socket.emit('disconnect')
-            socket.off()
-        }
+        socket.emit('join', { name, room }, (error) => {
+            if(error) {
+                alert(error);
+            }
+        });
+    }, [ENDPOINT, location.search]);
 
-    }, [location.search, ENDPOINT])
+    //     return () => {
+    //         socket.emit('disconnect')
+    //         socket.off()
+    //     }
+    // }, [location.search, ENDPOINT])
 
     useEffect(() => {
-        socket.on('message', () => {
+        socket.on('message', (message) => {
             setMessages([...messages, message])
         })
     }, [messages])
@@ -44,9 +48,29 @@ const Chat = ({location}) => {
         }
     }
 
+    console.log(message, messages)
+
+    const BAD_WORD = "eval";
+    const WARNING_MESSAGE = " <- hey man, what's this?";
+
+    const handleEditorChange = (e, value) => {
+        setMessage(
+            value.includes(BAD_WORD) && !value.includes(WARNING_MESSAGE)
+            ? value.replace(BAD_WORD, BAD_WORD + WARNING_MESSAGE)
+            : value.includes(WARNING_MESSAGE) && !value.includes(BAD_WORD)
+              ? value.replace(WARNING_MESSAGE, "")
+              : value
+        );
+    };
+
     return (
         <div className="outerContainer">
             <div className="container">
+                <ControlledEditor height="90vh"
+                                  value={message}
+                                  onChange={handleEditorChange}
+                                  onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}
+                />
                 <input value={message}
                        onChange={(e) => setMessage(e.target.value)}
                        onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/>
