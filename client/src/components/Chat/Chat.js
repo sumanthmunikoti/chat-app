@@ -2,6 +2,10 @@ import React, {useEffect, useState} from "react"
 import queryString from 'query-string'
 import io from 'socket.io-client'
 import {ControlledEditor} from "@monaco-editor/react";
+import './Chat.css'
+import InfoBar from "../Infobar/Infobar";
+import Input from "../Input/Input";
+import Messages from "../Messages/Messages";
 
 let socket
 
@@ -65,6 +69,9 @@ const Chat = ({ location }) => {
 
     return (
         <div className="outerContainer">
+            <InfoBar room={room}/>
+            <Messages messages={messages}/>
+            <Input message={message} setMessage={setMessage} sendMessage={sendMessage}/>
             <div className="container">
                 <ControlledEditor height="90vh"
                                   value={message}
@@ -74,8 +81,10 @@ const Chat = ({ location }) => {
                 <input value={message}
                        onChange={(e) => setMessage(e.target.value)}
                        onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/>
+
             </div>
         </div>
+
     )
 }
 
