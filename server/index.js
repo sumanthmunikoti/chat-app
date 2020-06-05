@@ -31,6 +31,12 @@ io.on('connection', (socket) => {
         callback()
     })
 
+    socket.on('sendCode', (code, callback) => {
+        const user = getUser(socket.id)
+        io.to(user.room).emit('code', { user : user.name, text: code})
+        callback()
+    })
+
 
     socket.on('disconnect', () => {
         console.log("User has left")
