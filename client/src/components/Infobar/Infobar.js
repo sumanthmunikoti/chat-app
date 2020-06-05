@@ -8,7 +8,7 @@ const InfoBar = ({ room }) => (
     <div className="infoBar">
         <div className="leftInnerContainer">
             <FontAwesomeIcon icon={faThumbsUp} />
-            <h3> {room} </h3>
+            <h3>Room: {room} </h3>
         </div>
         <div className="rightInnerContainer">
             <FontAwesomeIcon icon={faTimesCircle} />

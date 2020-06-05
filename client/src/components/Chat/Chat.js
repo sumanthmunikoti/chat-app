@@ -6,6 +6,7 @@ import './Chat.css'
 import InfoBar from "../Infobar/Infobar";
 import Input from "../Input/Input";
 import Messages from "../Messages/Messages";
+import SplitPane, { Pane }  from 'react-split-pane';
 
 let socket
 
@@ -68,23 +69,29 @@ const Chat = ({ location }) => {
     };
 
     return (
-        <div className="outerContainer">
-            <InfoBar room={room}/>
-            <Messages messages={messages}/>
-            <Input message={message} setMessage={setMessage} sendMessage={sendMessage}/>
-            <div className="container">
-                <ControlledEditor height="90vh"
-                                  value={message}
-                                  onChange={handleEditorChange}
-                                  onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}
-                />
+        <div>
+
+            <SplitPane split="vertical" minSize={50} defaultSize={700}>
+                <Pane initialSize="50%">
+                <h3>Type your code here</h3>
+                <ControlledEditor
+                    height="90vh"
+                    value={message}
+                    onChange={handleEditorChange}
+                    />
+                </Pane>
+
+                <Pane initialSize="50%" minSize="10%" maxSize="500px">
+                <Messages messages={messages} name={name}/>
+                <InfoBar room={room}/>
+                <h3>Type your messages here</h3>
                 <input value={message}
-                       onChange={(e) => setMessage(e.target.value)}
-                       onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/>
-
-            </div>
+                        onChange={(e) => setMessage(e.target.value)}
+                        onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/>
+                </Pane>
+                
+            </SplitPane>
         </div>
-
     )
 }
 
