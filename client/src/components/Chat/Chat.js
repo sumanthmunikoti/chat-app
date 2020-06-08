@@ -42,9 +42,10 @@ const Chat = ({ location }) => {
 
     useEffect(() => {
         socket.on('code', (code) => {
-            console.log("code", code)
+            console.log(code)
+            setCode(code)
         })
-    })
+    }, [])
 
     const sendMessage = (e) => {
         e.preventDefault()
@@ -55,7 +56,9 @@ const Chat = ({ location }) => {
     }
 
     const sendCode = (value) => {
-        socket.emit('sendCode', value, () => {console.log('Code delivered')})
+        socket.emit('sendCode', value, () => {
+            // console.log('Code delivered')
+        })
     }
 
 
@@ -74,13 +77,12 @@ const Chat = ({ location }) => {
 
     return (
         <div>
-
             <SplitPane split="vertical" minSize={50} defaultSize={700}>
                 <Pane initialSize="50%" minSize="10%" maxSize="500px" className="">
                 <h3>Type your code here</h3>
                 <ControlledEditor
                     height="90vh"
-                    value={message}
+                    value={code.text}
                     onChange={handleEditorChange}/>
                 </Pane>
 
@@ -92,7 +94,6 @@ const Chat = ({ location }) => {
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/>
                 </Pane>
-                
             </SplitPane>
         </div>
     )

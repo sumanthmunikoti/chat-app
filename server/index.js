@@ -32,8 +32,9 @@ io.on('connection', (socket) => {
     })
 
     socket.on('sendCode', (code, callback) => {
+        // console.log(code)
         const user = getUser(socket.id)
-        io.to(user.room).emit('code', { user : user.name, text: code})
+        io.to(user.room).emit('code', { user : user.name, text: code })
         callback()
     })
 
